@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="row">
+        <div class="col s12 m4 offset-m4">
+            <div class="card orange darken-3">
+                <form method="post" action="{{ url_for('register') }}">
+                    <div class="card-content white-text">
+
+                        <span class="card-title">Register</span>
+                        <div class="row">
+
+                            <!-- email -->
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">email</i>
+                                <input class="white-text" id="email" type="email" name="email" class="validate">
+                                <label for="email">Email</label>
+                            </div>
+
+                            <!-- password -->
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">lock</i>
+                                <input class="white-text" id="password" type="password" name="password" class="validate">
+                                <label for="password">Password</label>
+                            </div>
+
+                            <!-- confirm password -->
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">lock</i>
+                                <input class="white-text" id="confirmpassword" type="password" name="confirmpassword" class="validate">
+                                <label for="confirmpassword">Confirm Password</label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card-action">
+                        <button type="submit" class="btn white orange-text">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
