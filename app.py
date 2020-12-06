@@ -13,4 +13,7 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host=os.environ.get('IP'),
+            port=int(os.environ.get('PORT')),
+            debug=True)
+# TODO: REMOVE DEBUG=True BEFORE PRODUCTION. ONLY ADDED AT THIS STAGE IN COMPLIANCE WITH TAUGHT MATERIAL PROVIDED BY CODE INSTITUTE
