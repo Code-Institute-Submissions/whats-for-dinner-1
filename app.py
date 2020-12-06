@@ -19,6 +19,28 @@ mongo = PyMongo(app)
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirmpassword = request.form.get("confirmpassword")
+        user = mongo.db.users.find_one({"email": email})
+
+        if user:
+            flash('User already exists')
+            return redirect(url_for('register'))
+
+        if password != confirmpassword:
+            flash('Passwords must match')
+            return redirect(url_for('register'))
+
+        new_user = {
+            "email": email,
+            "password": generate_password_hash(password)
+        }
+        mongo.db.users.insert_one(new_user)
+
+        session['user'] = email
+        flash('Account registered')
     return render_template('register.html')
 
 

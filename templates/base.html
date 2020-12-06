@@ -20,7 +20,22 @@
 <body>
 
     {% include 'nav.html' %}
+
+    <section class="center-align">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="row flashed-message">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </section>
+
+    <main class="container">
     {% block content %}{% endblock content %}
+    </main>
 
     <!-- JQuery Import (Dependancy of Materialize -->
     <script
