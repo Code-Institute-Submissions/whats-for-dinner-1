@@ -51,11 +51,11 @@ def login():
         password = request.form.get('password')
 
         user = mongo.db.users.find_one({"email": email})
-
         if user:
             if check_password_hash(user['password'], password):
-                session['user'] = email
+                session['uid'] = str(user['_id'])
                 flash('You have been logged in.')
+                return redirect(url_for('account', uid=session['uid']))
             else:
                 flash('Email and password do not match our records')
                 return redirect(url_for('login'))
@@ -65,6 +65,27 @@ def login():
 
     return render_template('login.html')
 
+
+@app.route('/logout')
+def logout():
+    flash('You have been logged out')
+    session.pop('uid')
+    return redirect(url_for('login'))
+
+
+@app.route('/account/<uid>')
+def account(uid):
+    try:
+        user = mongo.db.users.find_one({'_id': ObjectId(uid)}, {'password': 0})
+        if session['uid']:
+            return render_template('account.html', user=user)
+        else:
+            flash('Please log in')
+            return redirect(url_for('login'))
+    #     handle if account number passed in is not valid object id
+    except:
+        flash('Please log in')
+        return redirect(url_for('login'))
 
 @app.route('/')
 @app.route('/get_recipes')
