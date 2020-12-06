@@ -3,41 +3,48 @@
 
     <div class="row">
         <div class="col s12 m6 offset-m3">
-            <div class="card orange darken-3">
+            <div class="card ">
                 <form method="post" action="{{ url_for('register') }}">
-                    <div class="card-content white-text">
+                    <div class="card-content">
 
                         <span class="card-title">Register</span>
                         <div class="row">
 
+                            <!-- name -->
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">account_circle</i>
+                                <input id="name" type="text" name="name" class="validate" minlength="5" maxlength="20" required pattern="^[a-zA-Z0-9@.]{5,20}$">
+                                <label for="name">Name</label>
+                            </div>
+
                             <!-- email -->
                             <div class="input-field col s12">
                                 <i class="material-icons prefix">email</i>
-                                <input class="white-text" id="email" type="email" name="email" class="validate" minlength="5" maxlength="20" required pattern="^[a-zA-Z0-9@.]{5,20}$">
+                                <input id="email" type="email" name="email" class="validate" minlength="5" maxlength="20" required pattern="^[a-zA-Z0-9@.]{5,20}$">
                                 <label for="email">Email</label>
                             </div>
 
                             <!-- password -->
                             <div class="input-field col s12">
                                 <i class="material-icons prefix">lock</i>
-                                <input class="white-text" id="password" type="password" name="password" class="validate" minlength="5" maxlength="20" required  pattern="^[a-zA-Z0-9]{5,20}$">
+                                <input  id="password" type="password" name="password" class="validate" minlength="5" maxlength="20" required  pattern="^[a-zA-Z0-9]{5,20}$">
                                 <label for="password">Password</label>
                             </div>
 
                             <!-- confirm password -->
                             <div class="input-field col s12">
                                 <i class="material-icons prefix">lock</i>
-                                <input class="white-text" id="confirmpassword" type="password" name="confirmpassword" class="validate" minlength="5" maxlength="20" required  pattern="^[a-zA-Z0-9]{5,20}$">
+                                <input id="confirmpassword" type="password" name="confirmpassword" class="validate" minlength="5" maxlength="20" required  pattern="^[a-zA-Z0-9]{5,20}$">
                                 <label for="confirmpassword">Confirm Password</label>
                             </div>
 
                         </div>
                     </div>
 
-                    <div class="card-action">
+                    <div class="card-action orange darken-3">
                         <button type="submit" class="btn white orange-text">Submit</button>
+                    <small class="white-text">Already have an account? <a class='white-text small-link purple-text-hover' href="{{ url_for('login') }}">Login here!</a></small>
                     </div>
-                    <small>Already have an account? <a href="{{ url_for('login') }}">Login here!</a></small>
 
 
                 </form>

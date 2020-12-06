@@ -20,6 +20,7 @@ mongo = PyMongo(app)
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        name = request.form.get('name')
         email = request.form.get("email")
         password = request.form.get("password")
         confirmpassword = request.form.get("confirmpassword")
@@ -34,6 +35,7 @@ def register():
             return redirect(url_for('register'))
 
         new_user = {
+            'name': name,
             "email": email,
             "password": generate_password_hash(password)
         }
@@ -41,7 +43,7 @@ def register():
 
         session['user'] = email
         flash('Account registered')
-    return render_template('register.html')
+    return render_template('login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])

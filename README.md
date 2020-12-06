@@ -147,5 +147,6 @@ The inspiration for this project came from Matthew Dudek's lockdown facebook ser
 
 
 ### Acknowledgements
-
+- Background image by Vaibhav Jadhav from Pexels
+- CSS Background Image overlay logic - learnwithparam.com
 [BACK TO TOP](#Fidil)

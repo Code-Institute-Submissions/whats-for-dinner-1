@@ -1,3 +1,30 @@
+html {
+    min-width: 300px;
+}
+
+.bgimg{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: url(../img/bgimg.jpg) center center no-repeat;
+    background-size: cover;
+}
+
+.bgimg:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #000000;
+    opacity: 0.6;
+  }
+body {
+
+
+}
+
 .nav-wrapper {
     display: flex;
     justify-content: space-around;
@@ -12,4 +39,13 @@
         position: relative;
         font-size: 1.5rem;
     }
+}
+
+
+.small-link{
+    text-decoration: underline;
+}
+
+.purple-text-hover:hover {
+    color:purple !important;
 }
