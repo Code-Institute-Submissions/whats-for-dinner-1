@@ -1,17 +1,16 @@
-
-  <nav>
+<nav>
     <div class="nav-wrapper orange darken-3">
         <div class="container">
-              <a href="{{ url_for('home') }}" class="brand-logo">What's For Dinner?</a>
-              <ul class="right hide-on-med-and-down">
+            <a href="{{ url_for('home') }}" class="brand-logo">What's For Dinner?</a>
+            <ul class="right hide-on-med-and-down">
                 {% include 'navlinks.html' %}
-              </ul>
-              <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+            </ul>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
         </div>
     </div>
-  </nav>
+</nav>
 
-  <ul class="sidenav" id="mobile-demo">
-      <li class="orange darken-3"><a href="#" class='white-text'>What's For Dinner?</a></li>
-        {% include 'navlinks.html' %}
-  </ul>
+<ul class="sidenav" id="mobile-demo">
+    <li class="orange darken-3"><a href="#" class='white-text'>What's For Dinner?</a></li>
+    {% include 'navlinks.html' %}
+</ul>
