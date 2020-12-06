@@ -8,6 +8,7 @@ html {
     height: 100vh;
     background: url(../img/bgimg.jpg) center center no-repeat;
     background-size: cover;
+    z-index: -1;
 }
 
 .bgimg:before {
@@ -20,10 +21,6 @@ html {
     background-color: #000000;
     opacity: 0.6;
   }
-body {
-
-
-}
 
 .nav-wrapper {
     display: flex;
@@ -48,4 +45,16 @@ body {
 
 .purple-text-hover:hover {
     color:purple !important;
+}
+
+#home-feature {
+    margin-top: 10vh;
+}
+
+h3 {
+    font-family: 'Pacifico', cursive;
+}
+
+p{
+    font-family: 'Quicksand', sans-serif;
 }
