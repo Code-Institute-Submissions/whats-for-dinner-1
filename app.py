@@ -1,4 +1,8 @@
 #  Copyright (c) 2020. Bryan S Mullen. All rights reserved.
+
+################################################################
+# Imports
+################################################################
 import os
 from flask import Flask, flash, render_template, redirect, request, session, url_for
 from flask_pymongo import PyMongo
@@ -8,15 +12,43 @@ from werkzeug.security import generate_password_hash, check_password_hash
 if os.path.exists("env.py"):
     import env
 
+################################################################
+# App Initialization
+################################################################
 app = Flask(__name__)
 
 app.config["MONGO_DBNAME"] = os.environ.get("MONGO_DBNAME")
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 app.secret_key = os.environ.get("SECRET_KEY")
-
 mongo = PyMongo(app)
 
 
+################################################################
+# Home & Account Routes
+################################################################
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/account/<uid>')
+def account(uid):
+    try:
+        user = mongo.db.users.find_one({'_id': ObjectId(uid)}, {'password': 0})
+        if session['uid']:
+            return render_template('account.html', user=user)
+        else:
+            flash('Please log in')
+            return redirect(url_for('login'))
+    #     handle if account number passed in is not valid object id
+    except:
+        flash('Please log in')
+        return redirect(url_for('login'))
+
+
+################################################################
+# Login Routes
+################################################################
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -75,27 +107,26 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/account/<uid>')
-def account(uid):
-    try:
-        user = mongo.db.users.find_one({'_id': ObjectId(uid)}, {'password': 0})
-        if session['uid']:
-            return render_template('account.html', user=user)
-        else:
-            flash('Please log in')
-            return redirect(url_for('login'))
-    #     handle if account number passed in is not valid object id
-    except:
-        flash('Please log in')
-        return redirect(url_for('login'))
+################################################################
+# Cuisine Routes
+################################################################
+################################################################
+# Course Routes
+################################################################
 
-@app.route('/')
-@app.route('/get_recipes')
-def get_recipes():
-    recipes = mongo.db.recipes.find()
-    return render_template('recipes.html', recipes=recipes)
+################################################################
+# Surprise Routes
+################################################################
 
 
+@app.route('/surprise')
+def surprise():
+    return redirect(url_for('home'))
+
+
+################################################################
+# Run Server
+################################################################
 if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
             port=int(os.environ.get('PORT')),
