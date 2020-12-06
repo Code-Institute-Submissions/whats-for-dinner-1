@@ -44,6 +44,28 @@ def register():
     return render_template('register.html')
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = mongo.db.users.find_one({"email": email})
+
+        if user:
+            if check_password_hash(user['password'], password):
+                session['user'] = email
+                flash('You have been logged in.')
+            else:
+                flash('Email and password do not match our records')
+                return redirect(url_for('login'))
+        else:
+            flash('Email and password do not match our records')
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+
 @app.route('/')
 @app.route('/get_recipes')
 def get_recipes():
