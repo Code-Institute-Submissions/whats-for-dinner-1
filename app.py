@@ -114,13 +114,17 @@ def logout():
 @app.route('/cuisine')
 def cuisine():
     cuisines = list(mongo.db.cuisines.find())
-    return render_template('category.html', categories=cuisines)
+    return render_template('category.html', categories=cuisines, sorting='cuisine')
 
-@app.route('/course/<course>')
-def chosen_cuisine(course):
-    cuisines = list(mongo.db.cuisines.find())
+@app.route('/cuisine/<selection>')
+def cuisine_choice(selection):
+    recipes = list(mongo.db.recipes.find({'cuisine':selection}))
+    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
 
-    return render_template('category.html', courses=cuisines)
+
+@app.route('/recipes/<selection>')
+def recipes_choice(selection):
+    return render_template('home')
 
 ################################################################
 # Course Routes
@@ -130,12 +134,12 @@ def chosen_cuisine(course):
 def course():
     courses = list(mongo.db.courses.find())
 
-    return render_template('category.html', categories=courses)
+    return render_template('category.html', categories=courses, sorting='course')
 
-@app.route('/course/<course>')
-def chosen_course(course):
+@app.route('/course/<selection>')
+def course_choice(selection):
     courses = list(mongo.db.courses.find())
-    print(courses)
+
     return render_template('category.html', courses=courses)
 
 ################################################################

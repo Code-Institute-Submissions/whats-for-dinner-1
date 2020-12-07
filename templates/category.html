@@ -14,7 +14,11 @@
                         <p>{{ category.blurb }}</p>
                     </div>
                     <div class="card-action">
-                        <a href="{{ url_for('chosen_course', course = category.name) }}">Get Cooking!</a>
+                        {% if endpoint %}
+                        <a href="{{ url_for( sorting + '_choice', selection =  category._id) }}">Get Cooking!</a>
+                        {% else %}
+                        <a href="{{ url_for( sorting + '_choice', selection =  category.name) }}">Get Cooking!</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
