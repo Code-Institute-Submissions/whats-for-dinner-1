@@ -149,4 +149,12 @@ The inspiration for this project came from Matthew Dudek's lockdown facebook ser
 ### Acknowledgements
 - Background image by Vaibhav Jadhav from Pexels
 - CSS Background Image overlay logic - learnwithparam.com
+- Photo by Tranmautritam from Pexels
+- Photo by Rajesh TP from Pexels
+- Photo by Acharaporn Kamornboonyarush from Pexels
+- Photo by Rachel Claire from Pexels
+- Photo by Marvin Ozz from Pexels
+- Photo by Daria Shevtsova from Pexels
+
+
 [BACK TO TOP](#Fidil)

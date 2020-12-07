@@ -85,3 +85,11 @@ p {
 #home-feature {
     margin-top: 10vh;
 }
+
+.card-title.bold {
+    font-weight: 700;
+}
+
+.card img {
+    opacity: 0.85;
+}

@@ -1,6 +1,6 @@
 {% if session.uid %}
-    <li><a href="#">Cuisine</a></li>
-    <li><a href="#">Course</a></li>
+    <li><a href="{{ url_for('cuisine') }}">Cuisine</a></li>
+    <li><a href="{{ url_for('course') }}">Course</a></li>
     <li><a href="#">Surprise</a></li>
     <li><a href="{{ url_for('account', uid=session['uid']) }}">Account</a></li>
     <li><a href="{{ url_for('logout') }}">Logout</a></li>

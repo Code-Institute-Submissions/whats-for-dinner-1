@@ -110,9 +110,33 @@ def logout():
 ################################################################
 # Cuisine Routes
 ################################################################
+
+@app.route('/cuisine')
+def cuisine():
+    cuisines = list(mongo.db.cuisines.find())
+    return render_template('category.html', categories=cuisines)
+
+@app.route('/course/<course>')
+def chosen_cuisine(course):
+    cuisines = list(mongo.db.cuisines.find())
+
+    return render_template('category.html', courses=cuisines)
+
 ################################################################
 # Course Routes
 ################################################################
+
+@app.route('/course')
+def course():
+    courses = list(mongo.db.courses.find())
+
+    return render_template('category.html', categories=courses)
+
+@app.route('/course/<course>')
+def chosen_course(course):
+    courses = list(mongo.db.courses.find())
+    print(courses)
+    return render_template('category.html', courses=courses)
 
 ################################################################
 # Surprise Routes
