@@ -8,7 +8,7 @@ from flask import Flask, flash, render_template, redirect, request, session, url
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from statistics import mean
 if os.path.exists("env.py"):
     import env
 
@@ -122,10 +122,6 @@ def cuisine_choice(selection):
     return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
 
 
-@app.route('/recipes/<selection>')
-def recipes_choice(selection):
-    return render_template('home')
-
 ################################################################
 # Course Routes
 ################################################################
@@ -149,6 +145,19 @@ def course_choice(selection):
 @app.route('/surprise')
 def surprise():
     return redirect(url_for('home'))
+
+
+################################################################
+# Recipes Routes
+################################################################
+
+
+@app.route('/recipes/<selection>')
+def recipes_choice(selection):
+    recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
+    rating_array = recipe['rating']
+    average_rating = mean(rating_array)
+    return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
 
 
 ################################################################
