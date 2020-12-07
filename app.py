@@ -138,9 +138,8 @@ def course():
 
 @app.route('/course/<selection>')
 def course_choice(selection):
-    courses = list(mongo.db.courses.find())
-
-    return render_template('category.html', courses=courses)
+    recipes = list(mongo.db.recipes.find({'course': selection}))
+    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
 
 ################################################################
 # Surprise Routes
