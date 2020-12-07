@@ -9,6 +9,9 @@ from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from statistics import mean
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, SelectField, FileField
+from wtforms.validators import DataRequired
 if os.path.exists("env.py"):
     import env
 
@@ -158,6 +161,20 @@ def recipes_choice(selection):
     rating_array = recipe['rating']
     average_rating = mean(rating_array)
     return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
+
+
+class RecipeForm(FlaskForm):
+    name = StringField('Recipe Name', validators=[DataRequired()])
+    cuisine = SelectField('Cuisine', choices=[('italian', 'italian'),('mexican','mexican')], validators=[DataRequired()])
+    course = SelectField('Course', choices=[('starter', 'starter'),('main','main')], validators=[DataRequired()])
+    ingredients = StringField('Ingredients', validators=[DataRequired()])
+    instructions = StringField('Instructions', validators=[DataRequired()])
+    image = FileField('Image', validators=[DataRequired()])
+
+@app.route('/recipes/new-recipe', methods=['get','post'])
+def new_recipe():
+    form=RecipeForm()
+    return render_template('new-recipe.html', form=form)
 
 
 ################################################################

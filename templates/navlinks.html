@@ -1,4 +1,5 @@
 {% if session.uid %}
+    <li><a href="{{ url_for('new_recipe') }}">New Recipe</a></li>
     <li><a href="{{ url_for('cuisine') }}">Cuisine</a></li>
     <li><a href="{{ url_for('course') }}">Course</a></li>
     <li><a href="#">Surprise</a></li>
