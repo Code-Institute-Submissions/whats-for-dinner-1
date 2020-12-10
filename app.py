@@ -4,13 +4,14 @@
 # Imports
 ################################################################
 import os
+import secrets
 from flask import Flask, flash, render_template, redirect, request, session, url_for
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from statistics import mean
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, FileField
+from wtforms import StringField, IntegerField, SelectField, FileField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 if os.path.exists("env.py"):
     import env
@@ -78,7 +79,8 @@ def register():
 
         session['user'] = email
         flash('Account registered')
-    return render_template('login.html')
+        return redirect(url_for('login'))
+    return render_template('register.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -165,14 +167,30 @@ def recipes_choice(selection):
 
 class RecipeForm(FlaskForm):
     name = StringField('Recipe Name', validators=[DataRequired()])
-    cuisine = SelectField('Cuisine', choices=[('italian', 'italian'),('mexican','mexican')], validators=[DataRequired()])
-    course = SelectField('Course', choices=[('starter', 'starter'),('main','main')], validators=[DataRequired()])
-    ingredients = StringField('Ingredients', validators=[DataRequired()])
-    instructions = StringField('Instructions', validators=[DataRequired()])
+    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian' ),('mexican','Mexican')], validators=[DataRequired()])
+    course = SelectField('Course', choices=[( 'starter', 'Starter'),('main','Main'),('dessert','Dessert')], validators=[DataRequired()])
+    ingredients = TextAreaField('Ingredients', validators=[DataRequired()])
+    instructions = TextAreaField('Instructions', validators=[DataRequired()])
     image = FileField('Image', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
-@app.route('/recipes/new-recipe', methods=['get','post'])
+@app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
+    if request.method == 'POST':
+        print(request.form)
+
+        filename = secrets.token_hex(8)
+        new_recipe = {
+            'name': request.form['name'],
+            'ingredients': request.form['ingredients'],
+            'instructions': request.form['instructions'],
+            'rating': [],
+            'cuisine': request.form['cuisine'],
+            'course': request.form['course'],
+            'image': filename,
+        }
+        mongo.db.recipes.insert_one(new_recipe)
+        print('inserted')
     form=RecipeForm()
     return render_template('new-recipe.html', form=form)
 

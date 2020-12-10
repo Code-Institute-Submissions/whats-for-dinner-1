@@ -4,34 +4,17 @@
         <li class="active">
             <div class="collapsible-header"><i class="material-icons">food_bank</i>Ingredients</div>
             <div class="collapsible-body white">
-                <ul>
-                    {% for ingredient in recipe.ingredients %}
-
-                        <li>
-                            <label>
-                                <input type="checkbox"/>
-                                <span></span>
-                            </label>
-                            {{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}</li>
-                    {% endfor %}
-                </ul>
+                <p>
+                    {{ recipe.ingredients }}
+                </p>
             </div>
         </li>
         <li>
             <div class="collapsible-header"><i class="material-icons">list</i>Preparation</div>
             <div class="collapsible-body white">
-                <ul>
-
-                    {% for instruction in recipe.instructions %}
-                        <li >
-                            <label>
-                                <input type="checkbox"/>
-                                <span></span>
-                            </label>
-                            {{ loop.index }}. {{ instruction }}
-                        </li>
-                    {% endfor %}
-                </ul>
+                <p>
+                    {{ recipe.instructions }}
+                </p>
             </div>
         </li>
         <li>
