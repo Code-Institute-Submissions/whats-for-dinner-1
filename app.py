@@ -11,8 +11,10 @@ from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from statistics import mean
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileRequired
 from wtforms import StringField, IntegerField, SelectField, FileField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
+
 if os.path.exists("env.py"):
     import env
 
@@ -151,7 +153,6 @@ def course_choice(selection):
 def surprise():
     return redirect(url_for('home'))
 
-
 ################################################################
 # Recipes Routes
 ################################################################
@@ -171,14 +172,13 @@ class RecipeForm(FlaskForm):
     course = SelectField('Course', choices=[( 'starter', 'Starter'),('main','Main'),('dessert','Dessert')], validators=[DataRequired()])
     ingredients = TextAreaField('Ingredients', validators=[DataRequired()])
     instructions = TextAreaField('Instructions', validators=[DataRequired()])
-    image = FileField('Image', validators=[DataRequired()])
+    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG','png'])])
     submit = SubmitField('Submit')
 
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
-    if request.method == 'POST':
-        print(request.form)
-
+    form = RecipeForm()
+    if form.validate_on_submit():
         filename = secrets.token_hex(8)
         new_recipe = {
             'name': request.form['name'],
@@ -191,7 +191,9 @@ def new_recipe():
         }
         mongo.db.recipes.insert_one(new_recipe)
         print('inserted')
-    form=RecipeForm()
+    else:
+        print('rejected')
+
     return render_template('new-recipe.html', form=form)
 
 

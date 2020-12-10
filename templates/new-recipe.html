@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col s12 m6 offset-m3">
 
-                <form method="post" action="/recipes/new-recipe/">
+                <form method="post" action="/recipes/new-recipe/" enctype="multipart/form-data">
                     <h3>New Recipe</h3>
                     {{ form.csrf_token }}
                     {{ form.name.label }} {{ form.name }}
