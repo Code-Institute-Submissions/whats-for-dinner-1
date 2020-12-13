@@ -123,9 +123,10 @@ def cuisine():
     cuisines = list(mongo.db.cuisines.find())
     return render_template('category.html', categories=cuisines, sorting='cuisine')
 
+
 @app.route('/cuisine/<selection>')
 def cuisine_choice(selection):
-    recipes = list(mongo.db.recipes.find({'cuisine':selection}))
+    recipes = list(mongo.db.recipes.find({'cuisine': selection}))
     return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
 
 
@@ -139,10 +140,12 @@ def course():
 
     return render_template('category.html', categories=courses, sorting='course')
 
+
 @app.route('/course/<selection>')
 def course_choice(selection):
     recipes = list(mongo.db.recipes.find({'course': selection}))
     return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
+
 
 ################################################################
 # Surprise Routes
@@ -153,6 +156,7 @@ def course_choice(selection):
 def surprise():
     return redirect(url_for('home'))
 
+
 ################################################################
 # Recipes Routes
 ################################################################
@@ -162,25 +166,41 @@ def surprise():
 def recipes_choice(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
     rating_array = recipe['rating']
-    if len(rating_array) >=1:
+    if len(rating_array) >= 1:
         average_rating = mean(rating_array)
     else:
         average_rating = 0
     return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
 
 
-@app.route('/recipes/<selection>', methods=['POST'])
+@app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
+def edit_recipe(selection):
+    recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
+    form=RecipeForm()
+    form.name.data = recipe['name']
+    form.cuisine.data = recipe['cuisine']
+    form.course.data = recipe['course']
+    form.ingredients.data = recipe['ingredients']
+    form.instructions.data = recipe['instructions']
+    form.image.data = recipe['image']
+    return render_template('edit-recipe.html', recipe=recipe, form=form)
+
+
+@app.route('/recipes/<selection>/delete', methods=['POST'])
 def delete_recipe(selection):
     mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
     return redirect(url_for('cuisine'))
 
+
 class RecipeForm(FlaskForm):
     name = StringField('Recipe Name', validators=[DataRequired()])
-    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian' ),('mexican','Mexican')], validators=[DataRequired()])
-    course = SelectField('Course', choices=[( 'starter', 'Starter'),('main','Main'),('dessert','Dessert')], validators=[DataRequired()])
+    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican')],
+                          validators=[DataRequired()])
+    course = SelectField('Course', choices=[('starter', 'Starter'), ('main', 'Main'), ('dessert', 'Dessert')],
+                         validators=[DataRequired()])
     ingredients = TextAreaField('Ingredients', validators=[DataRequired()])
     instructions = TextAreaField('Instructions', validators=[DataRequired()])
-    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG','png'])])
+    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG', 'png'])])
     submit = SubmitField('Submit')
 
 

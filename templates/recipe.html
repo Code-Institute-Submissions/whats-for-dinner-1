@@ -4,6 +4,10 @@
         <li>
             <div class="collapsible-header"><i class="material-icons">input</i>Actions</div>
             <div class="collapsible-body white">
+                <a href="{{ url_for('edit_recipe', selection=recipe._id) }}">
+                    <button>Edit</button>
+                </a>
+
                 <form method="post" action="{{ url_for('delete_recipe', selection=recipe._id) }}">
                     <button>Delete</button>
                 </form>
