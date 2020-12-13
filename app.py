@@ -158,13 +158,21 @@ def surprise():
 ################################################################
 
 
-@app.route('/recipes/<selection>')
+@app.route('/recipes/<selection>', methods=['GET'])
 def recipes_choice(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
     rating_array = recipe['rating']
-    average_rating = mean(rating_array)
+    if len(rating_array) >=1:
+        average_rating = mean(rating_array)
+    else:
+        average_rating = 0
     return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
 
+
+@app.route('/recipes/<selection>', methods=['POST'])
+def delete_recipe(selection):
+    mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
+    return redirect(url_for('cuisine'))
 
 class RecipeForm(FlaskForm):
     name = StringField('Recipe Name', validators=[DataRequired()])
@@ -174,6 +182,7 @@ class RecipeForm(FlaskForm):
     instructions = TextAreaField('Instructions', validators=[DataRequired()])
     image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG','png'])])
     submit = SubmitField('Submit')
+
 
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
@@ -191,6 +200,7 @@ def new_recipe():
         }
         mongo.db.recipes.insert_one(new_recipe)
         print('inserted')
+        return redirect(url_for('cuisine'))
     else:
         print('rejected')
 
