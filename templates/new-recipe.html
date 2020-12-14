@@ -12,10 +12,24 @@
 
                     {{ form.ingredients.label }} {{ form.ingredients }}
                     {{ form.instructions.label }} {{ form.instructions }}
-                    {{ form.image.label }} {{ form.image }}
 
                     {{ form.cuisine.label }} {{ form.cuisine }}
+                    <br/>
                     {{ form.course.label }} {{ form.course }}
+                    <br/>
+                    <div class="file-field input-field">
+
+                        <div class="file-path-wrapper">
+                            <div class="btn orange darken-4">
+                                <span>Upload Image</span>
+                                <input type="file">
+                            </div>
+                            <input class="file-path validate" type="text" placeholder="Upload one or more files">
+
+                            {{ form.image }}
+                        </div>
+                    </div>
+                    <br/>
                     {{ form.submit }}
 
 

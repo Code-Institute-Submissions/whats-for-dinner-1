@@ -13,9 +13,12 @@ from statistics import mean
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileRequired
 from wtforms import StringField, IntegerField, SelectField, FileField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NumberRange
 import boto3
+import random
+
 from botocore.config import Config
+
 if os.path.exists("env.py"):
     import env
 
@@ -160,10 +163,18 @@ def course_choice(selection):
 # Surprise Routes
 ################################################################
 
-
 @app.route('/surprise')
 def surprise():
-    return redirect(url_for('home'))
+    recipes = list(mongo.db.recipes.find({}))
+    recipe = random.choice(recipes)
+    print(recipe)
+
+    rating_array = recipe['rating']
+    if len(rating_array) >= 1:
+        average_rating = mean(rating_array)
+    else:
+        average_rating = 0
+    return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
 
 
 ################################################################
@@ -185,7 +196,7 @@ def recipes_choice(selection):
 @app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
 def edit_recipe(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
-    form=RecipeForm()
+    form = RecipeForm()
     form.name.data = recipe['name']
     form.cuisine.data = recipe['cuisine']
     form.course.data = recipe['course']
@@ -209,8 +220,11 @@ class RecipeForm(FlaskForm):
                          validators=[DataRequired()])
     ingredients = TextAreaField('Ingredients', validators=[DataRequired()])
     instructions = TextAreaField('Instructions', validators=[DataRequired()])
-    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG', 'png'])])
-    submit = SubmitField('Submit')
+    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG', 'png'])],
+                      render_kw={'class': 'file-path validate'})
+    submit = SubmitField('Submit', render_kw={'class': 'btn orange darken-4'})
+
+
 
 
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
@@ -238,6 +252,17 @@ def new_recipe():
         print('rejected')
 
     return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
+
+
+
+@app.route('/recipes/<selection>/rating', methods=['POST'])
+def rate_recipe(selection):
+    rating = request.form.get('rating')
+    print(rating)
+    print(selection)
+    mongo.db.recipes.update_one({'_id': ObjectId(selection)}, {'$addToSet': {'rating': int(rating)}})
+    flash('rating submitted')
+    return redirect(url_for('home'))
 
 
 ################################################################

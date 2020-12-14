@@ -93,3 +93,7 @@ p {
 .card img {
     opacity: 0.85;
 }
+
+.file-field > div.file-path-wrapper{
+    padding-left: 0;
+}
