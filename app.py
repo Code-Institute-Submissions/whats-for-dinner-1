@@ -14,7 +14,8 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileRequired
 from wtforms import StringField, IntegerField, SelectField, FileField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
-
+import boto3
+from botocore.config import Config
 if os.path.exists("env.py"):
     import env
 
@@ -27,7 +28,13 @@ app.config["MONGO_DBNAME"] = os.environ.get("MONGO_DBNAME")
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 app.secret_key = os.environ.get("SECRET_KEY")
 mongo = PyMongo(app)
-
+aws_access_key_id = os.environ.get('aws_access_key_id'),
+aws_secret_access_key = os.environ.get('aws_secret_access_key')
+s3 = boto3.client(
+    's3',
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key
+)
 
 ################################################################
 # Home & Account Routes
@@ -207,8 +214,12 @@ class RecipeForm(FlaskForm):
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
     form = RecipeForm()
+    s3_resource = boto3.resource('s3')
+    my_bucket = s3_resource.Bucket(os.environ.get('BUCKET_NAME'))
     if form.validate_on_submit():
+        image = request.files['image']
         filename = secrets.token_hex(8)
+        my_bucket.Object(filename).put(Body=image)
         new_recipe = {
             'name': request.form['name'],
             'ingredients': request.form['ingredients'],
@@ -224,7 +235,7 @@ def new_recipe():
     else:
         print('rejected')
 
-    return render_template('new-recipe.html', form=form)
+    return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
 
 
 ################################################################
