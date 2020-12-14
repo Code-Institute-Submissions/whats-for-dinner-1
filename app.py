@@ -35,6 +35,8 @@ s3 = boto3.client(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key
 )
+s3_url = 'https://bryansmullen-whats-for-dinner.s3-eu-west-1.amazonaws.com/'
+
 
 ################################################################
 # Home & Account Routes
@@ -128,13 +130,13 @@ def logout():
 @app.route('/cuisine')
 def cuisine():
     cuisines = list(mongo.db.cuisines.find())
-    return render_template('category.html', categories=cuisines, sorting='cuisine')
+    return render_template('category.html', categories=cuisines, sorting='cuisine', s3_url=s3_url)
 
 
 @app.route('/cuisine/<selection>')
 def cuisine_choice(selection):
     recipes = list(mongo.db.recipes.find({'cuisine': selection}))
-    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
+    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True, s3_url=s3_url)
 
 
 ################################################################
@@ -145,13 +147,13 @@ def cuisine_choice(selection):
 def course():
     courses = list(mongo.db.courses.find())
 
-    return render_template('category.html', categories=courses, sorting='course')
+    return render_template('category.html', categories=courses, sorting='course', s3_url=s3_url)
 
 
 @app.route('/course/<selection>')
 def course_choice(selection):
     recipes = list(mongo.db.recipes.find({'course': selection}))
-    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True)
+    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True, s3_url=s3_url)
 
 
 ################################################################
