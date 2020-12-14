@@ -119,10 +119,12 @@ def register():
             "password": generate_password_hash(password)
         }
         mongo.db.users.insert_one(new_user)
+        added_user = mongo.db.users.find_one({'email': email} , {'_id': 1})
 
-        session['user'] = email
+        session['uid'] = str(added_user['_id'])
         flash('Account registered')
-        return redirect(url_for('login'))
+        flash('You have been logged in.')
+        return redirect(url_for('account', uid=session['uid']))
     return render_template('register.html')
 
 
@@ -131,6 +133,8 @@ GET - Returns the login.html template for users to input their credentials
 POST - Accepts the login form and authenticates the user against the database before redirecting them to the account 
 template
 '''
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -156,6 +160,8 @@ def login():
 '''
 GET - Destroys the session and redirects the user to the login template
 '''
+
+
 @app.route('/logout')
 def logout():
     session.pop('uid')
@@ -171,6 +177,8 @@ def logout():
 '''
 GET - returns the category template populated with a list of cuisines
 '''
+
+
 @app.route('/cuisine')
 def cuisine():
     cuisines = list(mongo.db.cuisines.find())
@@ -180,6 +188,8 @@ def cuisine():
 '''
 GET - Returns the category template populated with recipes based on the cuisine selection
 '''
+
+
 @app.route('/cuisine/<selection>')
 def cuisine_choice(selection):
     recipes = list(mongo.db.recipes.find({'cuisine': selection}))
@@ -194,6 +204,8 @@ def cuisine_choice(selection):
 '''
 GET - returns the category template populated with a list of courses
 '''
+
+
 @app.route('/course')
 def course():
     courses = list(mongo.db.courses.find())
@@ -204,6 +216,8 @@ def course():
 '''
 GET - Returns the category template populated with recipes based on the course selection
 '''
+
+
 @app.route('/course/<selection>')
 def course_choice(selection):
     recipes = list(mongo.db.recipes.find({'course': selection}))
@@ -218,11 +232,12 @@ def course_choice(selection):
 '''
 GET - Returns a randomly selected recipe using the recipe.html template
 '''
+
+
 @app.route('/surprise')
 def surprise():
     recipes = list(mongo.db.recipes.find({}))
     recipe = random.choice(recipes)
-    print(recipe)
 
     rating_array = recipe['rating']
     if len(rating_array) >= 1:
@@ -240,6 +255,8 @@ def surprise():
 '''
 GET - Returns the recipe template using the selected recipe (from either the cuisine or course page)
 '''
+
+
 @app.route('/recipes/<selection>', methods=['GET'])
 def recipes_choice(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
@@ -255,6 +272,8 @@ def recipes_choice(selection):
 GET - Returns the edit recipe template for the selected recipe
 POST - Updates the record for the selected recipe in the database
 '''
+
+
 @app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
 def edit_recipe(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
@@ -271,6 +290,8 @@ def edit_recipe(selection):
 '''
 POST - Deletes the selected recipe in the database and redirects to the home page
 '''
+
+
 @app.route('/recipes/<selection>/delete', methods=['POST'])
 def delete_recipe(selection):
     mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
@@ -280,9 +301,12 @@ def delete_recipe(selection):
 '''
 CLASS - Form class for Recipe data model
 '''
+
+
 class RecipeForm(FlaskForm):
     name = StringField('Recipe Name', validators=[DataRequired()])
-    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican')],
+    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican'), ('indian', 'Indian'),
+                                              ('french', 'French'), ('japanese', 'Japanese'), ('other', 'Other')],
                           validators=[DataRequired()])
     course = SelectField('Course', choices=[('starter', 'Starter'), ('main', 'Main'), ('dessert', 'Dessert')],
                          validators=[DataRequired()])
@@ -297,6 +321,8 @@ class RecipeForm(FlaskForm):
 GET - Returns new-recipe template so users can create a new record
 POST - Writes the new record to the database and redirects to the home page
 '''
+
+
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
     form = RecipeForm()
@@ -327,6 +353,8 @@ def new_recipe():
 '''
 POST Adds the users rating to the record and redirects to the home page
 '''
+
+
 @app.route('/recipes/<selection>/rating', methods=['POST'])
 def rate_recipe(selection):
     rating = request.form.get('rating')

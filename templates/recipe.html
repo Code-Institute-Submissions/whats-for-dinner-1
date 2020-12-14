@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2 class="white-text">{{ recipe.name }}</h2>
+    <h2 class="white-text">{{ recipe.name.capitalize() }}</h2>
     <ul class="collapsible expandable">
         <li>
             <div class="collapsible-header"><i class="material-icons">input</i>Actions</div>

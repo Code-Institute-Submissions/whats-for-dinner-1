@@ -1,10 +1,11 @@
-{% if session.uid %}
-    <li><a href="{{ url_for('new_recipe') }}">New Recipe</a></li>
     <li><a href="{{ url_for('cuisine') }}">Cuisine</a></li>
     <li><a href="{{ url_for('course') }}">Course</a></li>
     <li><a href="{{ url_for('surprise') }}">Surprise</a></li>
+{% if session.uid %}
+    <li><a href="{{ url_for('new_recipe') }}">New Recipe</a></li>
     <li><a href="{{ url_for('account', uid=session['uid']) }}">Account</a></li>
     <li><a href="{{ url_for('logout') }}">Logout</a></li>
 {% else %}
     <li><a href="{{ url_for('login') }}">Login</a></li>
+    <li><a href="{{ url_for('register') }}">Register</a></li>
 {% endif %}
