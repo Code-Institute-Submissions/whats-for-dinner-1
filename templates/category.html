@@ -3,26 +3,48 @@
 
 
     <div class="row category-row">
-        {% for category in categories %}
-            <div class="col s12 m6 l4">
-                <div class="card medium">
-                    <div class="card-image">
-                        <img src="{{s3_url + category.image }}">
+        {% if categories|length > 0 %}
+            {% for category in categories %}
+                <div class="col s12 m6 l4">
+                    <div class="card medium">
+                        <div class="card-image">
+                            <img src="{{ s3_url + category.image }}">
+                        </div>
+                        <div class="card-content">
+                            <span class="bold orange-text card-title">{{ category.name }}</span>
+                            <p>{{ category.blurb }}</p>
+                        </div>
+                        <div class="card-action">
+                            {% if endpoint %}
+                                <a href="{{ url_for( sorting + '_choice', selection =  category._id) }}">Get
+                                    Cooking!</a>
+                            {% else %}
+                                <a href="{{ url_for( sorting + '_choice', selection =  category.name) }}">Get
+                                    Cooking!</a>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <span class="bold orange-text card-title">{{ category.name }}</span>
-                        <p>{{ category.blurb }}</p>
-                    </div>
-                    <div class="card-action">
-                        {% if endpoint %}
-                        <a href="{{ url_for( sorting + '_choice', selection =  category._id) }}">Get Cooking!</a>
-                        {% else %}
-                        <a href="{{ url_for( sorting + '_choice', selection =  category.name) }}">Get Cooking!</a>
-                        {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div id="home-feature">
+                <div class="row">
+                    <div class="col s12 m10 offset-m1 center-align">
+                        <div class="card medium valign-wrapper">
+                            <div class="card-content ">
+                                <h3>Nothing here yet!</h3>
+                                {% if session.uid %}
+                                    <p>Why not <a href="{{ url_for('new_recipe') }}">create one?</a></p>
+                                {% else %}
+                                    <p>Why not <a href="{{ url_for('register') }}">register</a> or <a
+                                            href="{{ url_for('login') }}">log in</a> and create one?</p>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+        {% endif %}
     </div>
 
 {% endblock content %}
