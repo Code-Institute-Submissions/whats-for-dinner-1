@@ -155,6 +155,6 @@ The inspiration for this project came from Matthew Dudek's lockdown facebook ser
 - Photo by Rachel Claire from Pexels
 - Photo by Marvin Ozz from Pexels
 - Photo by Daria Shevtsova from Pexels
-
+- Whitespace validation from [nullskull](http://www.nullskull.com/q/10393870/white-space-validation-in-javascript.aspx)
 
 [BACK TO TOP](#Fidil)

@@ -312,14 +312,20 @@ CLASS - Form class for Recipe data model
 
 
 class RecipeForm(FlaskForm):
-    name = StringField('Recipe Name', validators=[DataRequired()])
+    name = StringField('Recipe Name', validators=[DataRequired()],
+                       render_kw={'required': True, 'pattern': "^[a-zA-Z]{3,30}$",
+                                  'onblur': 'if(isSpacesOnly(this)){alert("Name field must contain characters other than spaces")}'})
     cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican'), ('indian', 'Indian'),
                                               ('french', 'French'), ('japanese', 'Japanese'), ('other', 'Other')],
                           validators=[DataRequired()])
     course = SelectField('Course', choices=[('starter', 'Starter'), ('main', 'Main'), ('dessert', 'Dessert')],
                          validators=[DataRequired()])
-    ingredients = TextAreaField('Ingredients', validators=[DataRequired()])
-    instructions = TextAreaField('Instructions', validators=[DataRequired()])
+    ingredients = TextAreaField('Ingredients', validators=[DataRequired()],
+                                render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                           'onblur': 'if(isSpacesOnly(this)){alert("Ingredients field must contain characters other than spaces")}'})
+    instructions = TextAreaField('Instructions', validators=[DataRequired()],
+                                 render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                            'onblur': 'if(isSpacesOnly(this)){alert("Instructions field must contain characters other than spaces")}'})
     image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG', 'png'])],
                       render_kw={'class': 'file-path validate'})
     submit = SubmitField('Submit', render_kw={'class': 'btn orange darken-4'})
