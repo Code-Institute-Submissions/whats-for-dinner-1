@@ -119,7 +119,7 @@ def register():
             "password": generate_password_hash(password)
         }
         mongo.db.users.insert_one(new_user)
-        added_user = mongo.db.users.find_one({'email': email} , {'_id': 1})
+        added_user = mongo.db.users.find_one({'email': email}, {'_id': 1})
 
         session['uid'] = str(added_user['_id'])
         flash('Account registered')
@@ -276,15 +276,19 @@ POST - Updates the record for the selected recipe in the database
 
 @app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
 def edit_recipe(selection):
-    recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
-    form = RecipeForm()
-    form.name.data = recipe['name']
-    form.cuisine.data = recipe['cuisine']
-    form.course.data = recipe['course']
-    form.ingredients.data = recipe['ingredients']
-    form.instructions.data = recipe['instructions']
-    form.image.data = recipe['image']
-    return render_template('edit-recipe.html', recipe=recipe, form=form)
+    if session['uid']:
+        recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
+        form = RecipeForm()
+        form.name.data = recipe['name']
+        form.cuisine.data = recipe['cuisine']
+        form.course.data = recipe['course']
+        form.ingredients.data = recipe['ingredients']
+        form.instructions.data = recipe['instructions']
+        form.image.data = recipe['image']
+        return render_template('edit-recipe.html', recipe=recipe, form=form)
+    else:
+        flash('Please log in to edit recipes')
+        return redirect(url_for('login'))
 
 
 '''
@@ -294,8 +298,12 @@ POST - Deletes the selected recipe in the database and redirects to the home pag
 
 @app.route('/recipes/<selection>/delete', methods=['POST'])
 def delete_recipe(selection):
-    mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
-    return redirect(url_for('home'))
+    if session['uid']:
+        mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
+        return redirect(url_for('home'))
+    else:
+        flash('Please log in to delete recipes')
+        return redirect(url_for('login'))
 
 
 '''
@@ -325,29 +333,33 @@ POST - Writes the new record to the database and redirects to the home page
 
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
-    form = RecipeForm()
-    s3_resource = boto3.resource('s3')
-    my_bucket = s3_resource.Bucket(os.environ.get('BUCKET_NAME'))
-    if form.validate_on_submit():
-        image = request.files['image']
-        filename = secrets.token_hex(8)
-        my_bucket.Object(filename).put(Body=image)
-        new_recipe = {
-            'name': request.form['name'],
-            'ingredients': request.form['ingredients'],
-            'instructions': request.form['instructions'],
-            'rating': [],
-            'cuisine': request.form['cuisine'],
-            'course': request.form['course'],
-            'image': filename,
-        }
-        mongo.db.recipes.insert_one(new_recipe)
-        print('inserted')
-        return redirect(url_for('home'))
-    else:
-        print('rejected')
+    if 'uid' in session:
+        form = RecipeForm()
+        s3_resource = boto3.resource('s3')
+        my_bucket = s3_resource.Bucket(os.environ.get('BUCKET_NAME'))
+        if form.validate_on_submit():
+            image = request.files['image']
+            filename = secrets.token_hex(8)
+            my_bucket.Object(filename).put(Body=image)
+            new_recipe = {
+                'name': request.form['name'],
+                'ingredients': request.form['ingredients'],
+                'instructions': request.form['instructions'],
+                'rating': [],
+                'cuisine': request.form['cuisine'],
+                'course': request.form['course'],
+                'image': filename,
+            }
+            mongo.db.recipes.insert_one(new_recipe)
+            print('inserted')
+            return redirect(url_for('home'))
+        else:
+            print('rejected')
 
-    return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
+        return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
+    else:
+        flash('Please log in to create recipes')
+        return redirect(url_for('login'))
 
 
 '''

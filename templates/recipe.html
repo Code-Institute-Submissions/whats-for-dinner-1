@@ -2,19 +2,21 @@
 {% block content %}
     <h2 class="white-text">{{ recipe.name.capitalize() }}</h2>
     <ul class="collapsible expandable">
-        <li>
-            <div class="collapsible-header"><i class="material-icons">input</i>Actions</div>
-            <div class="collapsible-body white">
-                <a href="{{ url_for('edit_recipe', selection=recipe._id) }}">
-                    <button class="btn orange darken-4">Edit</button>
-                </a>
+        {% if session.uid %}
+            <li>
+                <div class="collapsible-header"><i class="material-icons">input</i>Actions</div>
+                <div class="collapsible-body white">
+                    <a href="{{ url_for('edit_recipe', selection=recipe._id) }}">
+                        <button class="btn orange darken-4">Edit</button>
+                    </a>
 
-                <form method="post" action="{{ url_for('delete_recipe', selection=recipe._id) }}">
-                    <button class="btn orange darken-4">Delete</button>
-                </form>
-            </div>
+                    <form method="post" action="{{ url_for('delete_recipe', selection=recipe._id) }}">
+                        <button class="btn orange darken-4">Delete</button>
+                    </form>
+                </div>
 
-        </li>
+            </li>
+        {% endif %}
         <li class="active">
             <div class="collapsible-header"><i class="material-icons">food_bank</i>Ingredients</div>
             <div class="collapsible-body white">
