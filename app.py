@@ -70,12 +70,19 @@ GET - Returns the user page in the account.html template. Masks the password.
 '''
 
 
-@app.route('/account/<uid>')
-def account(uid):
+@app.route('/account/')
+def account():
     try:
+        uid = session['uid']
         user = mongo.db.users.find_one({'_id': ObjectId(uid)}, {'password': 0})
         if session['uid']:
-            return render_template('account.html', user=user)
+            try:
+                recipes_list = user['recipes']
+                recipes = mongo.db.recipes.find({'_id': {'$in': recipes_list}})
+            except:
+                recipes = []
+                print('Error finding recipes')
+            return render_template('account.html', user=user, recipes=recipes)
         else:
             flash('Please log in')
             return redirect(url_for('login'))
@@ -116,7 +123,8 @@ def register():
         new_user = {
             'name': name,
             "email": email,
-            "password": generate_password_hash(password)
+            "password": generate_password_hash(password),
+            "recipes": []
         }
         mongo.db.users.insert_one(new_user)
         added_user = mongo.db.users.find_one({'email': email}, {'_id': 1})
@@ -356,7 +364,9 @@ def new_recipe():
                 'course': request.form['course'],
                 'image': filename,
             }
-            mongo.db.recipes.insert_one(new_recipe)
+            inserted_recipe = mongo.db.recipes.insert_one(new_recipe)
+            mongo.db.users.update_one({'_id': ObjectId(session['uid'])},
+                                      {'$addToSet': {'recipes': inserted_recipe.inserted_id}})
             print('inserted')
             return redirect(url_for('home'))
         else:

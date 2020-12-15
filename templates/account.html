@@ -4,9 +4,20 @@
     <div class="row">
         <div class="col s12 m6 offset-m3">
             <div class="card ">
-                <h4>{{ user.name }}'s Profile</h4>
+                <h3>{{ user.name }}'s Profile</h3>
                 <p>Email Address: {{ user.email }}</p>
+                <h4>My Recipes</h4>
+                <ul>
 
+                    {% for recipe in recipes %}
+                        <li>
+                        <a href="{{ url_for('recipes_choice', selection=recipe._id) }}">
+
+                            {{ recipe.name }}
+                        </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
