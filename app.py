@@ -268,12 +268,21 @@ GET - Returns the recipe template using the selected recipe (from either the cui
 @app.route('/recipes/<selection>', methods=['GET'])
 def recipes_choice(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
+
+    # check to see if this recipe belongs to the logged in user
+    users_recipes = mongo.db.users.find_one({'_id': ObjectId(session['uid'])})['recipes']
+    if recipe['_id'] in users_recipes:
+        recipe_is_mine = True
+    else:
+        recipe_is_mine = False
+
+    # pull rating for selected recipe
     rating_array = recipe['rating']
     if len(rating_array) >= 1:
         average_rating = mean(rating_array)
     else:
         average_rating = 0
-    return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
+    return render_template('recipe.html', recipe=recipe, average_rating=average_rating, recipe_is_mine=recipe_is_mine)
 
 
 '''
@@ -284,7 +293,8 @@ POST - Updates the record for the selected recipe in the database
 
 @app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
 def edit_recipe(selection):
-    if session['uid']:
+    current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])}, {'recipes': 1})
+    if ObjectId(selection) in current_user['recipes']:
         recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
         form = RecipeForm()
         form.name.data = recipe['name']
@@ -295,8 +305,8 @@ def edit_recipe(selection):
         form.image.data = recipe['image']
         return render_template('edit-recipe.html', recipe=recipe, form=form)
     else:
-        flash('Please log in to edit recipes')
-        return redirect(url_for('login'))
+        flash('You may only edit your own recipes')
+        return redirect(url_for('home'))
 
 
 '''
@@ -306,7 +316,8 @@ POST - Deletes the selected recipe in the database and redirects to the home pag
 
 @app.route('/recipes/<selection>/delete', methods=['POST'])
 def delete_recipe(selection):
-    if session['uid']:
+    current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])}, {'recipes': 1})
+    if ObjectId(selection) in current_user['recipes']:
         mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
         return redirect(url_for('home'))
     else:
