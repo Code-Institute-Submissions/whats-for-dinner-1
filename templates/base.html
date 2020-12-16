@@ -13,7 +13,7 @@
 {% include 'nav.html' %}
 
 <!-- Flashed messages-->
-<section class="center-align">
+<div class="center-align">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
@@ -23,7 +23,7 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-</section>
+</div>
 
 <!-- Content injection block -->
 <main class="container">
