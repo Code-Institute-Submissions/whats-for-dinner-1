@@ -265,7 +265,7 @@ GET - Returns the recipe template using the selected recipe (from either the cui
 '''
 
 
-@app.route('/recipes/<selection>', methods=['GET'])
+@app.route('/recipes/<selection>/', methods=['GET'])
 def recipes_choice(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
 
@@ -282,6 +282,7 @@ def recipes_choice(selection):
         average_rating = mean(rating_array)
     else:
         average_rating = 0
+
     return render_template('recipe.html', recipe=recipe, average_rating=average_rating, recipe_is_mine=recipe_is_mine)
 
 
@@ -293,20 +294,43 @@ POST - Updates the record for the selected recipe in the database
 
 @app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
 def edit_recipe(selection):
+    # check permission
     current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])}, {'recipes': 1})
     if ObjectId(selection) in current_user['recipes']:
-        recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
-        form = RecipeForm()
-        form.name.data = recipe['name']
-        form.cuisine.data = recipe['cuisine']
-        form.course.data = recipe['course']
-        form.ingredients.data = recipe['ingredients']
-        form.instructions.data = recipe['instructions']
-        form.image.data = recipe['image']
-        return render_template('edit-recipe.html', recipe=recipe, form=form)
-    else:
-        flash('You may only edit your own recipes')
-        return redirect(url_for('home'))
+        # handle POST request
+        if request.method == 'POST':
+            form = EditForm()
+            if form.validate_on_submit():
+                filter = {'_id': ObjectId(selection)}
+                update = {
+                    'name': request.form['name'],
+                    'ingredients': request.form['ingredients'],
+                    'instructions': request.form['instructions'],
+                    'cuisine': request.form['cuisine'],
+                    'course': request.form['course'],
+                }
+                mongo.db.recipes.update_one(filter, {'$set': update})
+                return redirect(url_for('home'))
+            else:
+                print('rejected')
+                return redirect(url_for('home'))
+        else:
+            # handle GET request
+
+            if ObjectId(selection) in current_user['recipes']:
+
+                recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
+                form = RecipeForm()
+                print(form)
+                form.name.data = recipe['name']
+                form.cuisine.data = recipe['cuisine']
+                form.course.data = recipe['course']
+                form.ingredients.data = recipe['ingredients']
+                form.instructions.data = recipe['instructions']
+                return render_template('edit-recipe.html', recipe=recipe, form=form)
+            else:
+                flash('You may only edit your own recipes')
+                return redirect(url_for('home'))
 
 
 '''
@@ -326,7 +350,7 @@ def delete_recipe(selection):
 
 
 '''
-CLASS - Form class for Recipe data model
+NEW RECIPE FORM - Form class for Recipe data model
 '''
 
 
@@ -351,6 +375,29 @@ class RecipeForm(FlaskForm):
 
 
 '''
+EDIT FORM - Form class for Recipe data model
+'''
+
+
+class EditForm(FlaskForm):
+    name = StringField('Recipe Name', validators=[DataRequired()],
+                       render_kw={'required': True, 'pattern': "^[a-zA-Z]{3,30}$",
+                                  'onblur': 'if(isSpacesOnly(this)){alert("Name field must contain characters other than spaces")}'})
+    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican'), ('indian', 'Indian'),
+                                              ('french', 'French'), ('japanese', 'Japanese'), ('other', 'Other')],
+                          validators=[DataRequired()])
+    course = SelectField('Course', choices=[('starter', 'Starter'), ('main', 'Main'), ('dessert', 'Dessert')],
+                         validators=[DataRequired()])
+    ingredients = TextAreaField('Ingredients', validators=[DataRequired()],
+                                render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                           'onblur': 'if(isSpacesOnly(this)){alert("Ingredients field must contain characters other than spaces")}'})
+    instructions = TextAreaField('Instructions', validators=[DataRequired()],
+                                 render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                            'onblur': 'if(isSpacesOnly(this)){alert("Instructions field must contain characters other than spaces")}'})
+    submit = SubmitField('Submit', render_kw={'class': 'btn orange darken-4'})
+
+
+'''
 GET - Returns new-recipe template so users can create a new record
 POST - Writes the new record to the database and redirects to the home page
 '''
@@ -358,32 +405,35 @@ POST - Writes the new record to the database and redirects to the home page
 
 @app.route('/recipes/new-recipe/', methods=['GET', 'POST'])
 def new_recipe():
+    # handle POST request
     if 'uid' in session:
         form = RecipeForm()
         s3_resource = boto3.resource('s3')
         my_bucket = s3_resource.Bucket(os.environ.get('BUCKET_NAME'))
-        if form.validate_on_submit():
-            image = request.files['image']
-            filename = secrets.token_hex(8)
-            my_bucket.Object(filename).put(Body=image)
-            new_recipe = {
-                'name': request.form['name'],
-                'ingredients': request.form['ingredients'],
-                'instructions': request.form['instructions'],
-                'rating': [],
-                'cuisine': request.form['cuisine'],
-                'course': request.form['course'],
-                'image': filename,
-            }
-            inserted_recipe = mongo.db.recipes.insert_one(new_recipe)
-            mongo.db.users.update_one({'_id': ObjectId(session['uid'])},
-                                      {'$addToSet': {'recipes': inserted_recipe.inserted_id}})
-            print('inserted')
-            return redirect(url_for('home'))
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                image = request.files['image']
+                filename = secrets.token_hex(8)
+                my_bucket.Object(filename).put(Body=image)
+                new_recipe = {
+                    'name': request.form['name'],
+                    'ingredients': request.form['ingredients'],
+                    'instructions': request.form['instructions'],
+                    'rating': [],
+                    'cuisine': request.form['cuisine'],
+                    'course': request.form['course'],
+                    'image': filename,
+                }
+                inserted_recipe = mongo.db.recipes.insert_one(new_recipe)
+                mongo.db.users.update_one({'_id': ObjectId(session['uid'])},
+                                          {'$addToSet': {'recipes': inserted_recipe.inserted_id}})
+                print('inserted')
+                return redirect(url_for('home'))
+            else:
+                print('rejected')
         else:
-            print('rejected')
-
-        return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
+            # handle GET request
+            return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
     else:
         flash('Please log in to create recipes')
         return redirect(url_for('login'))
@@ -397,11 +447,12 @@ POST Adds the users rating to the record and redirects to the home page
 @app.route('/recipes/<selection>/rating', methods=['POST'])
 def rate_recipe(selection):
     rating = request.form.get('rating')
+    recipe_url = request.form.get('recipe_url')
     print(rating)
     print(selection)
     mongo.db.recipes.update_one({'_id': ObjectId(selection)}, {'$addToSet': {'rating': int(rating)}})
     flash('rating submitted')
-    return redirect(url_for('home'))
+    return redirect(url_for('recipes_choice', selection=selection))
 
 
 ################################################################
