@@ -11,12 +11,14 @@ import secrets
 import random
 import boto3
 
-from flask import Flask, flash, render_template, redirect, request, session, url_for
+from flask import Flask, flash, render_template, redirect, request, session, \
+    url_for
 from flask_pymongo import PyMongo
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileRequired
-from wtforms import StringField, SelectField, FileField, TextAreaField, SubmitField
+from wtforms import StringField, SelectField, FileField, TextAreaField, \
+    SubmitField
 from wtforms.validators import DataRequired
 
 from statistics import mean
@@ -99,7 +101,8 @@ def account():
 
 '''
 GET - Returns the register.html template for new users to register
-POST - Accepts the register form and creates a user in the databse, before redirecting to the login function
+POST - Accepts the register form and creates a user in the databse, before
+redirecting to the login function
 '''
 
 
@@ -138,8 +141,8 @@ def register():
 
 '''
 GET - Returns the login.html template for users to input their credentials
-POST - Accepts the login form and authenticates the user against the database before redirecting them to the account 
-template
+POST - Accepts the login form and authenticates the user against the database
+before redirecting them to the account template
 '''
 
 
@@ -190,18 +193,21 @@ GET - returns the category template populated with a list of cuisines
 @app.route('/cuisine')
 def cuisine():
     cuisines = list(mongo.db.cuisines.find())
-    return render_template('category.html', categories=cuisines, sorting='cuisine', s3_url=s3_url)
+    return render_template('category.html', categories=cuisines,
+                           sorting='cuisine', s3_url=s3_url)
 
 
 '''
-GET - Returns the category template populated with recipes based on the cuisine selection
+GET - Returns the category template populated with recipes based on the
+cuisine selection
 '''
 
 
 @app.route('/cuisine/<selection>')
 def cuisine_choice(selection):
     recipes = list(mongo.db.recipes.find({'cuisine': selection}))
-    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True, s3_url=s3_url)
+    return render_template('category.html', categories=recipes,
+                           sorting='recipes', endpoint=True, s3_url=s3_url)
 
 
 ################################################################
@@ -218,18 +224,21 @@ GET - returns the category template populated with a list of courses
 def course():
     courses = list(mongo.db.courses.find())
 
-    return render_template('category.html', categories=courses, sorting='course', s3_url=s3_url)
+    return render_template('category.html', categories=courses,
+                           sorting='course', s3_url=s3_url)
 
 
 '''
-GET - Returns the category template populated with recipes based on the course selection
+GET - Returns the category template populated with recipes based on the course
+selection
 '''
 
 
 @app.route('/course/<selection>')
 def course_choice(selection):
     recipes = list(mongo.db.recipes.find({'course': selection}))
-    return render_template('category.html', categories=recipes, sorting='recipes', endpoint=True, s3_url=s3_url)
+    return render_template('category.html', categories=recipes,
+                           sorting='recipes', endpoint=True, s3_url=s3_url)
 
 
 ################################################################
@@ -252,7 +261,8 @@ def surprise():
         average_rating = mean(rating_array)
     else:
         average_rating = 0
-    return render_template('recipe.html', recipe=recipe, average_rating=average_rating)
+    return render_template('recipe.html', recipe=recipe,
+                           average_rating=average_rating)
 
 
 ################################################################
@@ -261,7 +271,8 @@ def surprise():
 
 
 '''
-GET - Returns the recipe template using the selected recipe (from either the cuisine or course page)
+GET - Returns the recipe template using the selected recipe (from either the
+cuisine or course page)
 '''
 
 
@@ -270,7 +281,8 @@ def recipes_choice(selection):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
 
     # check to see if this recipe belongs to the logged in user
-    users_recipes = mongo.db.users.find_one({'_id': ObjectId(session['uid'])})['recipes']
+    users_recipes = mongo.db.users.find_one({'_id': ObjectId(session['uid'])})[
+        'recipes']
     if recipe['_id'] in users_recipes:
         recipe_is_mine = True
     else:
@@ -283,7 +295,9 @@ def recipes_choice(selection):
     else:
         average_rating = 0
 
-    return render_template('recipe.html', recipe=recipe, average_rating=average_rating, recipe_is_mine=recipe_is_mine)
+    return render_template('recipe.html', recipe=recipe,
+                           average_rating=average_rating,
+                           recipe_is_mine=recipe_is_mine)
 
 
 '''
@@ -295,7 +309,8 @@ POST - Updates the record for the selected recipe in the database
 @app.route('/recipes/<selection>/edit', methods=['GET', 'POST'])
 def edit_recipe(selection):
     # check permission
-    current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])}, {'recipes': 1})
+    current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])},
+                                           {'recipes': 1})
     if ObjectId(selection) in current_user['recipes']:
         # handle POST request
         if request.method == 'POST':
@@ -319,7 +334,8 @@ def edit_recipe(selection):
 
             if ObjectId(selection) in current_user['recipes']:
 
-                recipe = mongo.db.recipes.find_one({'_id': ObjectId(selection)})
+                recipe = mongo.db.recipes.find_one(
+                    {'_id': ObjectId(selection)})
                 form = RecipeForm()
                 print(form)
                 form.name.data = recipe['name']
@@ -327,20 +343,23 @@ def edit_recipe(selection):
                 form.course.data = recipe['course']
                 form.ingredients.data = recipe['ingredients']
                 form.instructions.data = recipe['instructions']
-                return render_template('edit-recipe.html', recipe=recipe, form=form)
+                return render_template('edit-recipe.html', recipe=recipe,
+                                       form=form)
             else:
                 flash('You may only edit your own recipes')
                 return redirect(url_for('home'))
 
 
 '''
-POST - Deletes the selected recipe in the database and redirects to the home page
+POST - Deletes the selected recipe in the database and redirects to the home
+page
 '''
 
 
 @app.route('/recipes/<selection>/delete', methods=['POST'])
 def delete_recipe(selection):
-    current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])}, {'recipes': 1})
+    current_user = mongo.db.users.find_one({'_id': ObjectId(session['uid'])},
+                                           {'recipes': 1})
     if ObjectId(selection) in current_user['recipes']:
         mongo.db.recipes.delete_one({'_id': ObjectId(selection)})
         return redirect(url_for('home'))
@@ -356,20 +375,30 @@ NEW RECIPE FORM - Form class for Recipe data model
 
 class RecipeForm(FlaskForm):
     name = StringField('Recipe Name', validators=[DataRequired()],
-                       render_kw={'required': True, 'pattern': "^[a-zA-Z]{3,30}$",
+                       render_kw={'required': True,
+                                  'pattern': "^[a-zA-Z]{3,30}$",
                                   'onblur': 'if(isSpacesOnly(this)){alert("Name field must contain characters other than spaces")}'})
-    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican'), ('indian', 'Indian'),
-                                              ('french', 'French'), ('japanese', 'Japanese'), ('other', 'Other')],
+    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'),
+                                              ('mexican', 'Mexican'),
+                                              ('indian', 'Indian'),
+                                              ('french', 'French'),
+                                              ('japanese', 'Japanese'),
+                                              ('other', 'Other')],
                           validators=[DataRequired()])
-    course = SelectField('Course', choices=[('starter', 'Starter'), ('main', 'Main'), ('dessert', 'Dessert')],
+    course = SelectField('Course',
+                         choices=[('starter', 'Starter'), ('main', 'Main'),
+                                  ('dessert', 'Dessert')],
                          validators=[DataRequired()])
     ingredients = TextAreaField('Ingredients', validators=[DataRequired()],
-                                render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                render_kw={'required': True,
+                                           'pattern': "^[a-zA-Z0-9).]{3,20}$",
                                            'onblur': 'if(isSpacesOnly(this)){alert("Ingredients field must contain characters other than spaces")}'})
     instructions = TextAreaField('Instructions', validators=[DataRequired()],
-                                 render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                 render_kw={'required': True,
+                                            'pattern': "^[a-zA-Z0-9).]{3,20}$",
                                             'onblur': 'if(isSpacesOnly(this)){alert("Instructions field must contain characters other than spaces")}'})
-    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'JPG', 'PNG', 'png'])],
+    image = FileField('Image', validators=[FileRequired(), FileAllowed(
+        ['jpg', 'JPG', 'PNG', 'png'])],
                       render_kw={'class': 'file-path validate'})
     submit = SubmitField('Submit', render_kw={'class': 'btn orange darken-4'})
 
@@ -381,19 +410,29 @@ EDIT FORM - Form class for Recipe data model
 
 class EditForm(FlaskForm):
     name = StringField('Recipe Name', validators=[DataRequired()],
-                       render_kw={'required': True, 'pattern': "^[a-zA-Z]{3,30}$",
+                       render_kw={'required': True,
+                                  'pattern': "^[a-zA-Z]{3,30}$",
                                   'onblur': 'if(isSpacesOnly(this)){alert("Name field must contain characters other than spaces")}'})
-    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'), ('mexican', 'Mexican'), ('indian', 'Indian'),
-                                              ('french', 'French'), ('japanese', 'Japanese'), ('other', 'Other')],
+    cuisine = SelectField('Cuisine', choices=[('italian', 'Italian'),
+                                              ('mexican', 'Mexican'),
+                                              ('indian', 'Indian'),
+                                              ('french', 'French'),
+                                              ('japanese', 'Japanese'),
+                                              ('other', 'Other')],
                           validators=[DataRequired()])
-    course = SelectField('Course', choices=[('starter', 'Starter'), ('main', 'Main'), ('dessert', 'Dessert')],
+    course = SelectField('Course',
+                         choices=[('starter', 'Starter'), ('main', 'Main'),
+                                  ('dessert', 'Dessert')],
                          validators=[DataRequired()])
     ingredients = TextAreaField('Ingredients', validators=[DataRequired()],
-                                render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                render_kw={'required': True,
+                                           'pattern': "^[a-zA-Z0-9).]{3,20}$",
                                            'onblur': 'if(isSpacesOnly(this)){alert("Ingredients field must contain characters other than spaces")}'})
     instructions = TextAreaField('Instructions', validators=[DataRequired()],
-                                 render_kw={'required': True, 'pattern': "^[a-zA-Z0-9).]{3,20}$",
-                                            'onblur': 'if(isSpacesOnly(this)){alert("Instructions field must contain characters other than spaces")}'})
+                                 render_kw={'required': True,
+                                            'pattern': "^[a-zA-Z0-9).]{3,20}$",
+                                            'onblur':
+                                                'if(isSpacesOnly(this)){alert("Instructions field must contain characters other than spaces")}'})
     submit = SubmitField('Submit', render_kw={'class': 'btn orange darken-4'})
 
 
@@ -426,14 +465,16 @@ def new_recipe():
                 }
                 inserted_recipe = mongo.db.recipes.insert_one(new_recipe)
                 mongo.db.users.update_one({'_id': ObjectId(session['uid'])},
-                                          {'$addToSet': {'recipes': inserted_recipe.inserted_id}})
+                                          {'$addToSet': {
+                                              'recipes': inserted_recipe.inserted_id}})
                 print('inserted')
                 return redirect(url_for('home'))
             else:
                 print('rejected')
         else:
             # handle GET request
-            return render_template('new-recipe.html', form=form, my_bucket=my_bucket)
+            return render_template('new-recipe.html', form=form,
+                                   my_bucket=my_bucket)
     else:
         flash('Please log in to create recipes')
         return redirect(url_for('login'))
@@ -450,7 +491,8 @@ def rate_recipe(selection):
     recipe_url = request.form.get('recipe_url')
     print(rating)
     print(selection)
-    mongo.db.recipes.update_one({'_id': ObjectId(selection)}, {'$addToSet': {'rating': int(rating)}})
+    mongo.db.recipes.update_one({'_id': ObjectId(selection)},
+                                {'$addToSet': {'rating': int(rating)}})
     flash('rating submitted')
     return redirect(url_for('recipes_choice', selection=selection))
 
@@ -462,4 +504,5 @@ if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
             port=int(os.environ.get('PORT')),
             debug=True)
-# TODO: REMOVE DEBUG=True BEFORE PRODUCTION. ONLY ADDED AT THIS STAGE IN COMPLIANCE WITH TAUGHT MATERIAL PROVIDED BY CODE INSTITUTE
+# TODO: REMOVE DEBUG=True BEFORE PRODUCTION. ONLY ADDED AT THIS STAGE IN
+#  COMPLIANCE WITH TAUGHT MATERIAL PROVIDED BY CODE INSTITUTE

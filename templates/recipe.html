@@ -34,21 +34,24 @@
                 </p>
             </div>
         </li>
-        <li>
-            <div class="collapsible-header"><i class="material-icons">star</i>Rating</div>
-            <div class="collapsible-body white">
-                <span>Average rating: {{ average_rating }}</span>
-                <p>Use the slider below to select your rating, and then click submit. Your rating will be added and you
-                    will be brought to the home page to explore more exciting recipes!</p>
-                <form method="post" action="{{ url_for('rate_recipe', selection=recipe._id) }}">
-                    <p class="range-field">
-                        <input type="range" id="rating" name="rating" min="0" max="10"/>
-                        <label for="rating">Rating</label>
-                    </p>
-                    <button type="submit" class="btn orange darken-4">Submit</button>
-                </form>
-            </div>
-        </li>
+        {% if session.uid %}
+            <li>
+                <div class="collapsible-header"><i class="material-icons">star</i>Rating</div>
+                <div class="collapsible-body white">
+                    <span>Average rating: {{ average_rating }}</span>
+                    <p>Use the slider below to select your rating, and then click submit. Your rating will be added and
+                        you
+                        will be brought to the home page to explore more exciting recipes!</p>
+                    <form method="post" action="{{ url_for('rate_recipe', selection=recipe._id) }}">
+                        <p class="range-field">
+                            <input type="range" id="rating" name="rating" min="0" max="10"/>
+                            <label for="rating">Rating</label>
+                        </p>
+                        <button type="submit" class="btn orange darken-4">Submit</button>
+                    </form>
+                </div>
+            </li>
+        {% endif %}
     </ul>
 
 

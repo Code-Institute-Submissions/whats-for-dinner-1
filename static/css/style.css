@@ -97,3 +97,7 @@ p {
 .file-field > div.file-path-wrapper{
     padding-left: 0;
 }
+
+.account-card{
+    padding: 60px
+}

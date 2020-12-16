@@ -98,6 +98,7 @@ Wireframes were created for all basic views on both mobile devices as well as we
 - Flask Form populates an image data uri to the first item in the form when attempting to update
 - Unable to pre populate image field in update form
 - Users can submit multiple ratings from the same account
+- Recipe name cannot currently contain any spaces - this was in an effort to disallow recipe names including only spaces. Requires addressing in the future.
 
 [BACK TO CONTENTS](#Contents)
 
@@ -141,7 +142,61 @@ In this section, I will mention all of the languages, frameworks, libraries, and
 - In the absence of a specific, detailed and comprehensive module on automated testing provided by the course, manual testing has been opted for. It is assumed that this will not be penalised.
 - The deployed, live version of the site was utilised for the tests.
 
+### Tests Conducted
 
+#### Finished Project Tests
+
+The function of these tests is to ensure that the finished project renders acceptably on all intended devices. Four sets of tests were completed:
+
+- Validation
+- Modelled Device Testing
+- Automated Cross Browser Testing
+- Manual Browser Testing
+
+#### Validation
+
+Validation took place on HTML, CSS, JS, and Python files in the project. With the exception of a number of 'line too long' errors in python which would have caused tradeoffs in legibility, and an erroneous javascript error (stemming from the validator not having access to the function call), no errors returned.
+
+#### Modelled Device Testing
+
+To test the layout on multiple devices, Google Chrome DevTools is used to simulate the size of multiple devices and screen ratios. Screen responsiveness has been noted to ensure the correct screen ratio was delivered, links are tested by clicking through, images are checked to ensure they displayed correctly on all devices, and the website as a whole is checked to ensure everything renders as expected. Any faults or issues were noted in the [Device Testing Chart](testing/testing_charts/testing-spreadsheet.ods)
+
+The following device dimensions are tested:
+
+- Moto G4
+- Galaxy S5
+- Pixel 2
+- Pixel 2 XL
+- iPhone 5/SE
+- iPhone 6,7,8
+- iPhone 6,7,8 Plus
+- iPhone X
+- iPad
+- iPad Pro
+- Surface Duo
+- Galaxy Fold
+- Desktop
+
+
+#### Automated Cross Browser Testing
+
+To test the layout on multiple browsers, [browserstack](https://www.browserstack.com) is used to emulate different browsers running on virtual machines. Results are documented in [Device Testing Chart](testing/testing_charts/testing-spreadsheet.ods). The following browsers are tested:
+
+- Catalina 13.1
+- Firefox 82
+- Chrome 64
+- Opera 48
+- Yandex 14.12
+
+#### Manual Cross Browser Testing
+
+To complement the above results the website is also tested manually on up-to-date browsers available on the developer's machine. The results are once again documented in the [Device Testing Chart](testing/testing_charts/testing-spreadsheet.ods)
+
+The following browsers are tested:
+
+- Edge
+- Brave
+- Chrome
 
 [BACK TO CONTENTS](#Contents)
 
