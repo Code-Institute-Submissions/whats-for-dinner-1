@@ -5,7 +5,7 @@ html {
 
 body {
     display: flex; /* required for sticky footer */
-    min-height: 100vh;  /* required for sticky footer */
+    min-height: 100vh; /* required for sticky footer */
     flex-direction: column; /* required for sticky footer */
 }
 
@@ -86,6 +86,7 @@ p {
     margin-top: 10vh;
 }
 
+/* Misc */
 .card-title.bold {
     font-weight: 700;
 }
@@ -94,10 +95,11 @@ p {
     opacity: 0.85;
 }
 
-.file-field > div.file-path-wrapper{
-    padding-left: 0;
+
+.account-card {
+    padding: 60px
 }
 
-.account-card{
-    padding: 60px
+.file-field > div.file-path-wrapper {
+    padding-left: 0;
 }

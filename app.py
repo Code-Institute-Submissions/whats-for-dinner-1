@@ -7,26 +7,24 @@
 
 
 import os
-import secrets
 import random
-import boto3
+import secrets
+from statistics import mean
 
+import boto3
+from bson.objectid import ObjectId
 from flask import Flask, flash, render_template, redirect, request, session, \
     url_for
 from flask_pymongo import PyMongo
-
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileRequired
+from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, SelectField, FileField, TextAreaField, \
     SubmitField
 from wtforms.validators import DataRequired
 
-from statistics import mean
-from bson.objectid import ObjectId
-from werkzeug.security import generate_password_hash, check_password_hash
-
 if os.path.exists("env.py"):
-    import env
+    pass
 
 ################################################################
 # App Initialization
@@ -503,6 +501,4 @@ def rate_recipe(selection):
 if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
             port=int(os.environ.get('PORT')),
-            debug=True)
-# TODO: REMOVE DEBUG=True BEFORE PRODUCTION. ONLY ADDED AT THIS STAGE IN
-#  COMPLIANCE WITH TAUGHT MATERIAL PROVIDED BY CODE INSTITUTE
+            debug=False)
