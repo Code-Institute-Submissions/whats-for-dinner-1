@@ -13,13 +13,13 @@ The primary goal of this project is to create  an online resource where users ca
 1. [Contents](#Contents)
 2. [Project Background](#Project-Background)
 3. [UX Design](#UX-Design)
-   - [Goals](#Goals)
    - [User Stories](#User-Stories)
    - [Wireframes](#Wireframes)
    - [Development](#Development)
 4. [Features](#Features)
    - [Existing Features](#Existing-Features)
    - [Features Left to Implement](#Features-Left-to-Implement)
+   - [Known Issues](#Known-Issues)
 5. [Technologies Used](#TechnologiesUsed)
    - [Languages](#Languages)
    - [Libraries](#Libraries)
@@ -62,14 +62,13 @@ With the target users in mind, the following user stories are generated.
 
 ### Wireframes
 
+Wireframes were created for all basic views on both mobile devices as well as web devices. They have been included for the convenience of the examiners in the [github repository](https://github.com/bryansmullen/whats-for-dinner).
+
 ---
 
 ## Features
 
 ### Existing Features
-
-
-### Features Left to Implement
 
 - Shared list of cuisine styles
 - Shared list of recipes within each cuisine
@@ -88,6 +87,17 @@ With the target users in mind, the following user stories are generated.
 - Ability to edit recipe items
 - Ability to delete recipe items
 
+### Features Left to Implement
+
+- Ability to update image of recipe
+- Automated testing of project
+- Ingredients & Instructions could be formatted as lists if there were a more user friendly way to allow for an indefinite number of input fields and the tracking of associated units for ingredients.
+
+### Known Issues
+
+- Flask Form populates an image data uri to the first item in the form when attempting to update
+- Unable to pre populate image field in update form
+- Users can submit multiple ratings from the same account
 
 [BACK TO CONTENTS](#Contents)
 
@@ -101,22 +111,26 @@ In this section, I will mention all of the languages, frameworks, libraries, and
 
 - [HTML](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5) is used to render the content of the website.
 - [CSS](https://www.w3.org/Style/CSS/#specs) is used to style the content of the website.
+- [Javascript](https://www.w3schools.com/js/DEFAULT.asp) is used for initialising front end functionality
+- [Python](https://www.python.org/) is used for backend logic and serving of files
 
 ### Frameworks
 
-- Flask
-- Jinja 2
+- [Flask](https://flask.palletsprojects.com/en/1.1.x/) is the prescribed framework for this project
+- [Jinja 2](https://pypi.org/project/Jinja2/) is templating language used
 
 ### Libraries
 
-- Materialize CSS
+- [Materialize CSS](https://materializecss.com/) is used for presentation
 
 ### Other Tools
 
 - [Git](https://git-scm.com/) is used for version control in this project. Throughout the project, a Develop branch has been added to the project to allow work to continue on the website without breaking the functioning version on the Master branch.
 - [Github](https://github.com/) is used as a remote repository for the site, as well as for deployment of the final version.
-- Pycharm
-- MongoDB
+- [Pycharm](https://www.jetbrains.com/pycharm/) was used as IDE
+- [MongoDB](https://www.mongodb.com/) was used as a database solution
+- [AWS S3](https://aws.amazon.com/s3/) was used to host images
+- [Heroku](https://www.heroku.com/) was used for deployment
 
 [BACK TO CONTENTS](#Contents)
 
@@ -124,14 +138,47 @@ In this section, I will mention all of the languages, frameworks, libraries, and
 
 ## Testing
 
+- In the absence of a specific, detailed and comprehensive module on automated testing provided by the course, manual testing has been opted for. It is assumed that this will not be penalised.
+- The deployed, live version of the site was utilised for the tests.
+
+
+
 [BACK TO CONTENTS](#Contents)
 
 ---
 
 ## Deployment
 
-This project is deployed on Heroku, which can be accessed at [What's For Dinner](#) or [What's For Dinner Deployed Version](#). The deployment is linked to the Master Branch of the repo, and will automatically update the deployment when any changes are committed to this branch of the remote repository.
+This project is deployed on Heroku, which can be accessed at [What's For Dinner](https://github.com/bryansmullen/whats-for-dinner) or [What's For Dinner Deployed Version](https://bryansmullen-whats-for-dinner.herokuapp.com/). The deployment is linked to the Master Branch of the repo, and will automatically update the deployment when any changes are committed to this branch of the remote repository. The deployment procedure is documented below.
+- Project was initialized as a git repository
+- A remote repository was linked to the project using github
+- Code was commited to git and pushed to github taking care to ignore sensitive files, for example env.py, as well as venv folders and notes files
+- It was ensured that both an up-to-date requirements.txt file was maintained, and a Procfile to configure heroku also existed
+- A remote repository was created for the project using heroku
+- Environment variables from the local environment were added to heroku's config variables
+- Heroku was configured to automatically deploy from the github master branch
 
+[BACK TO CONTENTS](#Contents)
+
+## Cloning a Local Version
+
+The procedure for cloning a local version on a windows machine is detailed below. Instructions for Mac/Linux will be considered at a later date.
+
+- Ensure Git, Python, Pip, and PyCharm are installed on your machine
+- Clone the [github repository](https://github.com/bryansmullen/whats-for-dinner/) using `git clone https://github.com/bryansmullen/whats-for-dinner.git`
+- Within the created folder, create and activate a virtual environment
+- Install the project requirements within the virtual environment the requirements.txt file
+- Create and configure a MongoDB database
+- Create and configure an instance of AWS S3 with a Bucket
+- Create environment variables for each of the following:
+    - IP
+    - PORT
+    - MONGO_DBNAME
+    - MONGO_URI
+    - SECRET_KEY
+    - aws_access_key_id
+    - aws_secret_access_key
+    - BUCKET_NAME
 
 [BACK TO CONTENTS](#Contents)
 
@@ -144,9 +191,6 @@ This project is deployed on Heroku, which can be accessed at [What's For Dinner]
 The inspiration for this project came from Matthew Dudek's lockdown facebook series.
 
 ### Media
-
-
-### Acknowledgements
 - Background image by Vaibhav Jadhav from Pexels
 - CSS Background Image overlay logic - learnwithparam.com
 - Photo by Tranmautritam from Pexels
@@ -155,6 +199,9 @@ The inspiration for this project came from Matthew Dudek's lockdown facebook ser
 - Photo by Rachel Claire from Pexels
 - Photo by Marvin Ozz from Pexels
 - Photo by Daria Shevtsova from Pexels
+- Photo by Anna Shvets from Pexels
+- Favicon from https://www.freefavicon.com/freefavicons/food/downloadicon.php?ico=fast-food-triple-cheeseburger-204444.zip
+### Acknowledgements
 - Whitespace validation from [nullskull](http://www.nullskull.com/q/10393870/white-space-validation-in-javascript.aspx)
 
-[BACK TO TOP](#Fidil)
+[BACK TO TOP](#What's-For-Dinner?)
