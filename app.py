@@ -43,12 +43,12 @@ app.secret_key = os.environ.get("SECRET_KEY")
 mongo = PyMongo(app)
 
 # s3 init
-aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
-aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID'),
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 s3 = boto3.client(
     's3',
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key
+    AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
 )
 s3_url = 'https://bryansmullen-whats-for-dinner.s3-eu-west-1.amazonaws.com/'
 
