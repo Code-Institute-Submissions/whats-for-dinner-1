@@ -24,7 +24,7 @@ from wtforms import StringField, SelectField, FileField, TextAreaField, \
 from wtforms.validators import DataRequired
 
 if os.path.exists("env.py"):
-    pass
+    import env
 
 ################################################################
 # App Initialization
