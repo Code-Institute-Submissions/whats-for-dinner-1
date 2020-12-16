@@ -1,58 +1,79 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2 class="white-text">{{ recipe.name.capitalize() }}</h2>
-    <ul class="collapsible expandable">
-        {% if recipe_is_mine %}
-            <li>
-                <div class="collapsible-header"><i class="material-icons">input</i>Actions</div>
+    {% if recipe %}
+        <h2 class="white-text">{{ recipe.name.capitalize() }}</h2>
+        <ul class="collapsible expandable">
+            {% if recipe_is_mine %}
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">input</i>Actions</div>
+                    <div class="collapsible-body white">
+
+                        <a href="{{ url_for('edit_recipe', selection=recipe._id) }}">
+                            <button class="btn orange darken-4">Edit</button>
+                        </a>
+
+                        <form method="post" action="{{ url_for('delete_recipe', selection=recipe._id) }}">
+                            <button class="btn orange darken-4">Delete</button>
+                        </form>
+                    </div>
+
+                </li>
+            {% endif %}
+            <li class="active">
+                <div class="collapsible-header"><i class="material-icons">food_bank</i>Ingredients</div>
                 <div class="collapsible-body white">
-
-                    <a href="{{ url_for('edit_recipe', selection=recipe._id) }}">
-                        <button class="btn orange darken-4">Edit</button>
-                    </a>
-
-                    <form method="post" action="{{ url_for('delete_recipe', selection=recipe._id) }}">
-                        <button class="btn orange darken-4">Delete</button>
-                    </form>
-                </div>
-
-            </li>
-        {% endif %}
-        <li class="active">
-            <div class="collapsible-header"><i class="material-icons">food_bank</i>Ingredients</div>
-            <div class="collapsible-body white">
-                <p>
-                    {{ recipe.ingredients }}
-                </p>
-            </div>
-        </li>
-        <li>
-            <div class="collapsible-header"><i class="material-icons">list</i>Preparation</div>
-            <div class="collapsible-body white">
-                <p>
-                    {{ recipe.instructions }}
-                </p>
-            </div>
-        </li>
-        {% if session.uid %}
-            <li>
-                <div class="collapsible-header"><i class="material-icons">star</i>Rating</div>
-                <div class="collapsible-body white">
-                    <span>Average rating: {{ average_rating }}</span>
-                    <p>Use the slider below to select your rating, and then click submit. Your rating will be added and
-                        you
-                        will be brought to the home page to explore more exciting recipes!</p>
-                    <form method="post" action="{{ url_for('rate_recipe', selection=recipe._id) }}">
-                        <p class="range-field">
-                            <input type="range" id="rating" name="rating" min="0" max="10"/>
-                            <label for="rating">Rating</label>
-                        </p>
-                        <button type="submit" class="btn orange darken-4">Submit</button>
-                    </form>
+                    <p>
+                        {{ recipe.ingredients }}
+                    </p>
                 </div>
             </li>
-        {% endif %}
-    </ul>
+            <li>
+                <div class="collapsible-header"><i class="material-icons">list</i>Preparation</div>
+                <div class="collapsible-body white">
+                    <p>
+                        {{ recipe.instructions }}
+                    </p>
+                </div>
+            </li>
+            {% if session.uid %}
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">star</i>Rating</div>
+                    <div class="collapsible-body white">
+                        <span>Average rating: {{ average_rating }}</span>
+                        <p>Use the slider below to select your rating, and then click submit. Your rating will be added
+                            and
+                            you
+                            will be brought to the home page to explore more exciting recipes!</p>
+                        <form method="post" action="{{ url_for('rate_recipe', selection=recipe._id) }}">
+                            <p class="range-field">
+                                <input type="range" id="rating" name="rating" min="0" max="10"/>
+                                <label for="rating">Rating</label>
+                            </p>
+                            <button type="submit" class="btn orange darken-4">Submit</button>
+                        </form>
+                    </div>
+                </li>
+            {% endif %}
+        </ul>
+    {% else %}
+        <div id="home-feature">
+            <div class="row">
+                <div class="col s12 m10 offset-m1 center-align">
+                    <div class="card medium valign-wrapper">
+                        <div class="card-content ">
+                            <h3>Nothing here yet!</h3>
+                            {% if session.uid %}
+                                <p>Why not <a href="{{ url_for('new_recipe') }}">create one?</a></p>
+                            {% else %}
+                                <p>Why not <a href="{{ url_for('register') }}">register</a> or <a
+                                        href="{{ url_for('login') }}">log in</a> and create one?</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
 
 {% endblock content %}

@@ -99,6 +99,7 @@ Wireframes were created for all basic views on both mobile devices as well as we
 - Unable to pre populate image field in update form
 - Users can submit multiple ratings from the same account
 - Recipe name cannot currently contain any spaces - this was in an effort to disallow recipe names including only spaces. Requires addressing in the future.
+- Upon uploading an image on the new recipe form, materialize.min.js throws a 'maximum call stack size exceeded' error. This does not affect the overall functionality.
 
 [BACK TO CONTENTS](#Contents)
 

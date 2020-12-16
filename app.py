@@ -254,13 +254,16 @@ GET - Returns a randomly selected recipe using the recipe.html template
 @app.route('/surprise')
 def surprise():
     recipes = list(mongo.db.recipes.find({}))
-    recipe = random.choice(recipes)
-
-    rating_array = recipe['rating']
-    if len(rating_array) >= 1:
-        average_rating = mean(rating_array)
+    if len(recipes) >= 1:
+        recipe = random.choice(recipes)
+        rating_array = recipe['rating']
+        if len(rating_array) >= 1:
+            average_rating = mean(rating_array)
+        else:
+            average_rating = 0
     else:
-        average_rating = 0
+        recipe = None
+        average_rating = None
     return render_template('recipe.html', recipe=recipe,
                            average_rating=average_rating)
 
